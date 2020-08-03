@@ -1,6 +1,6 @@
-# contentful-dart
+# Flutter Contentful
 
-[![pub package](https://img.shields.io/pub/v/contentful.svg)](https://pub.dartlang.org/packages/contentful)
+[![pub package](https://img.shields.io/pub/v/contentful.svg)](https://pub.dartlang.org/packages/flutter_contentful)
 
 This Dart package is a small abstraction on top of the Contentful Delivery API.
 The package was forked from: https://pub.dev/packages/contentful
@@ -9,7 +9,7 @@ The package was forked from: https://pub.dev/packages/contentful
 
 To use this plugin, install `flutter_contentful` as a dependency in your `pubspec.yaml`.
 
-
+git 
 ## API
 
 The following example uses `equatable` and `json_annotation` to create a

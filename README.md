@@ -1,6 +1,5 @@
 # Flutter Contentful
 
-[![pub package](https://img.shields.io/pub/v/contentful.svg)](https://pub.dartlang.org/packages/flutter_contentful)
 
 This Dart package is a small abstraction on top of the Contentful Delivery API.
 The package was forked from: https://pub.dev/packages/contentful

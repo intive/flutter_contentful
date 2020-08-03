@@ -30,12 +30,7 @@ class Client {
     final client = HttpClient(accessToken);
     return Client._(client, spaceId, host: host, environment: environment);
   }
-  Client._(
-    this._client,
-    this.spaceId, {
-    this.host,
-    this.environment
-  });
+  Client._(this._client, this.spaceId, {this.host, this.environment});
 
   final HttpClient _client;
   final String spaceId;
@@ -110,6 +105,20 @@ class Includes {
     return _isLink(list.first);
   }
 
+  _walkContent(dynamic field) {
+    if (field['data'] != null && field['data']['target'] != null) {
+      final resolved = map.resolveLink(field['data']['target']);
+      field['data']['target'] = resolved;
+    }
+
+    if (field['content'] == null) return;
+
+    List<dynamic> content = field['content'];
+    content.forEach((el) {
+      _walkContent(el);
+    });
+  }
+
   Map<String, dynamic> _walkMap(Map<String, dynamic> entry) {
     if (_isLink(entry)) {
       final resolved = map.resolveLink(entry);
@@ -129,6 +138,8 @@ class Includes {
           key,
           _walkMap(map.resolveLink(fieldJson)),
         );
+      } else if (fieldJson is Map && fieldJson['content'] != null) {
+        _walkContent(fieldJson);
       }
       return MapEntry<String, dynamic>(key, fieldJson);
     });
@@ -138,6 +149,7 @@ class Includes {
   List<Map<String, dynamic>> resolveLinks(List<dynamic> items) {
     return items.map((item) => _walkMap(item)).toList();
   }
+
 }
 
 class IncludesMap {

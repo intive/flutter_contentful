@@ -4,7 +4,6 @@ import 'package:flutter_contentful/client.dart';
 
 void main() {
   Function deepEq = const DeepCollectionEquality().equals;
-
   group('Includes', () {
     final Map<String, Map<String, dynamic>> linkedEntry = {
       "sys": {

@@ -1,6 +1,10 @@
 # Changelog
 
-## 0.1.1 Initial Release
+## 0.2.0
+- added support for rich text
+- added more verbose Exception messages
+
+## 0.1.1
 - added support for contentful environments
 
 ## 0.1.0 Initial Release

@@ -55,7 +55,7 @@ class Client {
   }) async {
     final response = await _client.get(_uri('/entries/$id', params: params));
     if (response.statusCode != 200) {
-      throw Exception('getEntry failed');
+      throw Exception(response.body);
     }
     return fromJson(json.decode(utf8.decode(response.bodyBytes)));
   }
@@ -66,7 +66,7 @@ class Client {
   ) async {
     final response = await _client.get(_uri('/entries', params: query));
     if (response.statusCode != 200) {
-      throw Exception('getEntries failed');
+      throw Exception(response.body);
     }
 
     dynamic jsonr = json.decode(utf8.decode(response.bodyBytes));

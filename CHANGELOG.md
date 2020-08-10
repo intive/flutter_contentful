@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.2.1
+- added httpsUrl getter to assetfile
+
 ## 0.2.0
 - added support for rich text
 - added more verbose Exception messages

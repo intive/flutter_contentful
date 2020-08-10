@@ -48,6 +48,8 @@ class AssetFile extends Equatable {
   final String url;
   final AssetFileDetails details;
 
+  String get httpsUrl => 'https:${this.url}';
+
   @override
   List<Object> get props => [fileName, contentType, url, details];
 

@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.2.2
+- added description to asset model
+
 ## 0.2.1
 - added httpsUrl getter to assetfile
 

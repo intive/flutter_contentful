@@ -20,9 +20,11 @@ class AssetFields extends Equatable {
   AssetFields({
     this.title,
     this.file,
+    this.description
   });
 
   final String title;
+  final String description;
   final AssetFile file;
 
   @override

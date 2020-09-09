@@ -1,7 +1,9 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
+
 import 'entry.dart';
 import 'system_fields.dart';
+
 part 'asset.g.dart';
 
 @JsonSerializable()
@@ -17,11 +19,7 @@ class Asset extends Entry<AssetFields> {
 
 @JsonSerializable()
 class AssetFields extends Equatable {
-  AssetFields({
-    this.title,
-    this.file,
-    this.description
-  });
+  AssetFields({this.title, this.file, this.description});
 
   final String title;
   final String description;
@@ -51,6 +49,17 @@ class AssetFile extends Equatable {
   final AssetFileDetails details;
 
   String get httpsUrl => 'https:${this.url}';
+  String httpsUrlWithSize([int height, int width]) {
+    String url = httpsUrl;
+    url += '?';
+    if (height != null) {
+      url += 'h=$height';
+    }
+    if (width != null) {
+      url += 'w=$width';
+    }
+    return url;
+  }
 
   @override
   List<Object> get props => [fileName, contentType, url, details];

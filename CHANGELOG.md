@@ -1,4 +1,6 @@
 # Changelog
+## 0.2.3
+- added support for contentful image resizing
 
 ## 0.2.2
 - added description to asset model

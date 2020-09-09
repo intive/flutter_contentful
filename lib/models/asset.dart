@@ -49,7 +49,7 @@ class AssetFile extends Equatable {
   final AssetFileDetails details;
 
   String get httpsUrl => 'https:${this.url}';
-  String httpsUrlWithSize([int height, int width]) {
+  String httpsUrlWithSize({int height, int width}) {
     String url = httpsUrl;
     url += '?';
     if (height != null) {

@@ -1,8 +1,8 @@
 name: flutter_contentful
-version: "0.2.4"
+version: "0.2.5"
 description: Contentful Delivery API client for Dart. This Dart package is a small abstraction on top of the Contentful Delivery API.
-homepage: https://github.com/bennibau/flutter_contentful
-repository: https://github.com/bennibau/flutter_contentful
+homepage: https://github.com/intive-opensource/flutter_contentful
+repository: https://github.com/intive-opensource/flutter_contentful
 
 environment:
   sdk: ">=2.0.0 <3.0.0"

@@ -1,4 +1,7 @@
 # Changelog
+## 0.2.5
+- updated readme file
+
 ## 0.2.4
 - added support for contentful image resizing with named parameters
 

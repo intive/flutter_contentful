@@ -88,3 +88,23 @@ Future<void> main() async {
   print('Title: ${event.fields.title}');
 }
 ```
+### Assets
+You can use the Contentful Asset api like this:
+
+```
+if you want to have the url to download the raw asset file you can access the a getter for the url like this:
+final url = asset.file.httpsUrl;
+
+If you want to resize the asset image you can use the api like this:
+
+To preserve the aspect ratio only set height or width but not both.
+final size600url = asset.file.httpsUrlWithSize(width: 600)
+final height600url = asset.file.httpsUrlWithSize(height: 600)
+
+To have a custom size set both parameters:
+final customSizeUrl = asset.file.httpsUrlWithSize(height: 600, width: 600)
+
+
+```
+
+

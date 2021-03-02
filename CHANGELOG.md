@@ -1,4 +1,7 @@
 # Changelog
+## 0.2.6
+- added 10 seconds timeout
+
 ## 0.2.5
 - updated readme file
 

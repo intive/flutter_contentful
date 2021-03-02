@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
+
 import 'package:http/http.dart' as http;
+
 import './models/entry.dart';
 
 class HttpClient extends http.BaseClient {
@@ -53,7 +55,9 @@ class Client {
     T Function(Map<String, dynamic>) fromJson, {
     Map<String, dynamic> params,
   }) async {
-    final response = await _client.get(_uri('/entries/$id', params: params));
+    final response = await _client
+        .get(_uri('/entries/$id', params: params))
+        .timeout(Duration(seconds: 10));
     if (response.statusCode != 200) {
       throw Exception(response.body);
     }
@@ -64,7 +68,9 @@ class Client {
     Map<String, dynamic> query,
     T Function(Map<String, dynamic>) fromJson,
   ) async {
-    final response = await _client.get(_uri('/entries', params: query));
+    final response = await _client
+        .get(_uri('/entries', params: query))
+        .timeout(Duration(seconds: 10));
     if (response.statusCode != 200) {
       throw Exception(response.body);
     }
@@ -149,7 +155,6 @@ class Includes {
   List<Map<String, dynamic>> resolveLinks(List<dynamic> items) {
     return items.map((item) => _walkMap(item)).toList();
   }
-
 }
 
 class IncludesMap {

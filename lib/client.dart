@@ -144,7 +144,7 @@ Iterable<MapEntry<String, Map<String, dynamic>>> _mapEntriesFromList(
 ) =>
     list
         .map((json) => Map<String, dynamic>.from(json))
-        .map((entry) => MapEntry(E.id(entry), entry));
+        .map((entry) => MapEntry(E.id(entry) | '', entry));
 
 class IncludesMap {
   factory IncludesMap.fromJson(Map<String, dynamic> includes) => IncludesMap(

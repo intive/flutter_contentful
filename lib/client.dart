@@ -25,17 +25,12 @@ class Client {
     String spaceId,
     String accessToken, {
     String host = 'cdn.contentful.com',
-        String environment = 'master',
+    String environment = 'master',
   }) {
     final client = HttpClient(accessToken);
     return Client._(client, spaceId, host: host, environment: environment);
   }
-  Client._(
-    this._client,
-    this.spaceId, {
-    this.host,
-        this.environment
-  });
+  Client._(this._client, this.spaceId, {this.host, this.environment});
 
   final HttpClient _client;
   final String spaceId;

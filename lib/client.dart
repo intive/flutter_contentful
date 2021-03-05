@@ -132,9 +132,10 @@ class Includes {
     });
   }
 
-  Iterable<Map<String, dynamic>> resolveLinks(List<dynamic> items) => items
+  List<Map<String, dynamic>> resolveLinks(List<dynamic> items) => items
       .map((item) => Map<String, dynamic>.from(item))
-      .map((item) => _walkMap(item));
+      .map((item) => _walkMap(item))
+      .toList();
 }
 
 Iterable<MapEntry<String, Map<String, dynamic>>> _mapEntriesFromList(

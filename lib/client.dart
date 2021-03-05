@@ -116,6 +116,7 @@ class Includes {
           .orElse(() => some(fieldJson)
               .filter((field) => field is Map)
               .map((field) => Map<String, dynamic>.from(field))
+              .filter(E.isLink)
               .map((field) => map.resolveLink(field) | field)
               .map(_walkMap)
               .map((field) => MapEntry(key, field)))

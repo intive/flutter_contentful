@@ -7,8 +7,8 @@ part 'asset.g.dart';
 @JsonSerializable()
 class Asset extends Entry<AssetFields> {
   Asset({
-    SystemFields sys,
-    AssetFields fields,
+    required SystemFields sys,
+    AssetFields? fields,
   }) : super(sys: sys, fields: fields);
 
   factory Asset.fromJson(Map<String, dynamic> json) => _$AssetFromJson(json);
@@ -18,8 +18,8 @@ class Asset extends Entry<AssetFields> {
 @JsonSerializable()
 class AssetFields extends Equatable {
   AssetFields({
-    this.title,
-    this.file,
+    required this.title,
+    required this.file,
   });
 
   final String title;
@@ -37,10 +37,10 @@ class AssetFields extends Equatable {
 @JsonSerializable()
 class AssetFile extends Equatable {
   AssetFile({
-    this.fileName,
-    this.contentType,
-    this.url,
-    this.details,
+    required this.fileName,
+    required this.contentType,
+    required this.url,
+    required this.details,
   });
 
   final String fileName;
@@ -60,8 +60,8 @@ class AssetFile extends Equatable {
 @JsonSerializable()
 class AssetFileDetails extends Equatable {
   AssetFileDetails({
-    this.size,
-    this.image,
+    required this.size,
+    required this.image,
   });
 
   final int size;
@@ -79,8 +79,8 @@ class AssetFileDetails extends Equatable {
 @JsonSerializable()
 class AssetFileDetailsImage extends Equatable {
   AssetFileDetailsImage({
-    this.height,
-    this.width,
+    required this.height,
+    required this.width,
   });
 
   final int height;

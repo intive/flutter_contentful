@@ -7,14 +7,14 @@ part 'system_fields.g.dart';
 @JsonSerializable()
 class SystemFields extends Equatable {
   SystemFields({
-    this.id,
-    this.type,
-    this.space,
-    this.contentType,
-    this.revision,
-    this.createdAt,
-    this.updatedAt,
-    this.locale,
+    required this.id,
+    required this.type,
+    required this.space,
+    required this.contentType,
+    required this.revision,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.locale,
   });
 
   final String id;

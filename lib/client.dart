@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:dartz/dartz.dart';
 import 'package:http/http.dart' as http;
-import './models/entry.dart';
+import 'package:contentful/lib/entry.dart' as E;
+import 'package:contentful/models/entry.dart';
 
 class HttpClient extends http.BaseClient {
   factory HttpClient(String accessToken) {
@@ -32,14 +34,14 @@ class Client {
   Client._(
     this._client,
     this.spaceId, {
-    this.host,
+    required this.host,
   });
 
   final HttpClient _client;
   final String spaceId;
   final String host;
 
-  Uri _uri(String path, {Map<String, dynamic> params}) => Uri(
+  Uri _uri(String path, {Map<String, dynamic>? params}) => Uri(
         scheme: 'https',
         host: host,
         path: '/spaces/$spaceId/environments/master$path',
@@ -53,7 +55,7 @@ class Client {
   Future<T> getEntry<T extends Entry>(
     String id,
     T Function(Map<String, dynamic>) fromJson, {
-    Map<String, dynamic> params,
+    Map<String, dynamic>? params,
   }) async {
     final response = await _client.get(_uri('/entries/$id', params: params));
     if (response.statusCode != 200) {
@@ -81,86 +83,78 @@ class Client {
   }
 }
 
-class Includes {
-  factory Includes.fromJson(Map<String, dynamic> json) {
-    final map = IncludesMap.fromJson(json);
-
-    return Includes(map);
+bool _isListOfLinks(List<dynamic> list) {
+  if (list.isEmpty) {
+    return false;
   }
+
+  if (!(list.first is Map)) {
+    return false;
+  }
+
+  return E.isLink(list.first);
+}
+
+class Includes {
+  factory Includes.fromJson(Map<String, dynamic> json) =>
+      Includes(IncludesMap.fromJson(json));
 
   Includes(this.map);
   final IncludesMap map;
 
-  bool _isLink(Map<String, dynamic> entry) {
-    return entry['sys'] != null && entry['sys']['type'] == 'Link';
-  }
-
-  bool _isListOfLinks(List<dynamic> list) {
-    if (list.isEmpty) {
-      return false;
-    }
-
-    if (!(list.first is Map)) {
-      return false;
-    }
-
-    return _isLink(list.first);
-  }
+  MapEntry<String, dynamic> _resolveFieldEntry(String key, dynamic fieldJson) =>
+      some(fieldJson)
+          .filter((fieldJson) => fieldJson is List && _isListOfLinks(fieldJson))
+          .map((fieldJson) => MapEntry<String, dynamic>(
+                key,
+                resolveLinks(fieldJson),
+              ))
+          .orElse(() => some(fieldJson)
+              .filter((field) => field is Map)
+              .map((field) => Map<String, dynamic>.from(field))
+              .map((field) => map.resolveLink(field) | field)
+              .map(_walkMap)
+              .map((field) => MapEntry(key, field)))
+          .getOrElse(() => MapEntry(key, fieldJson));
 
   Map<String, dynamic> _walkMap(Map<String, dynamic> entry) {
-    if (_isLink(entry)) {
-      final resolved = map.resolveLink(entry);
-      return _isLink(resolved) ? entry : _walkMap(resolved);
-    } else if (entry['fields'] == null) return entry;
+    if (E.isLink(entry)) {
+      return map.resolveLink(entry).map(_walkMap) | entry;
+    }
 
-    final fields = entry['fields'] as Map<String, dynamic>;
-
-    entry['fields'] = fields.map((key, fieldJson) {
-      if (fieldJson is List && _isListOfLinks(fieldJson)) {
-        return MapEntry<String, dynamic>(
-          key,
-          resolveLinks(fieldJson),
-        );
-      } else if (fieldJson is Map && _isLink(fieldJson)) {
-        return MapEntry<String, dynamic>(
-          key,
-          _walkMap(map.resolveLink(fieldJson)),
-        );
-      }
-      return MapEntry<String, dynamic>(key, fieldJson);
+    return E.fields(entry).fold(() => entry, (fields) {
+      entry['fields'] = fields.map(_resolveFieldEntry);
+      return entry;
     });
-    return entry;
   }
 
-  List<Map<String, dynamic>> resolveLinks(List<dynamic> items) {
-    return items.map((item) => _walkMap(item)).toList();
-  }
+  Iterable<Map<String, dynamic>> resolveLinks(List<dynamic> items) => items
+      .map((item) => Map<String, dynamic>.from(item))
+      .map((item) => _walkMap(item));
 }
 
+Iterable<MapEntry<String, Map<String, dynamic>>> _mapEntriesFromList(
+  Iterable<dynamic> list,
+) =>
+    list
+        .map((json) => Map<String, dynamic>.from(json))
+        .map((entry) => MapEntry(E.id(entry), entry));
+
 class IncludesMap {
-  factory IncludesMap.fromJson(Map<String, dynamic> json) {
-    final Map<String, Map<String, Map<String, dynamic>>> map = {};
-
-    json.forEach((type, json) {
-      if (map[type] == null) map[type] = {};
-      final list = json as List<dynamic>;
-      list.forEach((json) {
-        final entry = json as Map<String, dynamic>;
-        map[type][entry['sys']['id']] = entry;
-      });
-    });
-
-    return IncludesMap(map);
-  }
+  factory IncludesMap.fromJson(Map<String, dynamic> includes) => IncludesMap(
+        includes.map((type, entriesForType) => MapEntry(
+              type,
+              Map.fromEntries(_mapEntriesFromList(entriesForType)),
+            )),
+      );
 
   IncludesMap(this._map);
 
   final Map<String, Map<String, Map<String, dynamic>>> _map;
 
-  Map<String, dynamic> resolveLink(Map<String, dynamic> link) {
+  Option<Map<String, dynamic>> resolveLink(Map<String, dynamic> link) {
     final String type = link['sys']['linkType'];
     final String id = link['sys']['id'];
-    if (_map[type] == null || _map[type][id] == null) return link;
-    return _map[type][id];
+    return optionOf(_map[type]?[id]);
   }
 }

@@ -1,7 +1,10 @@
 import 'package:equatable/equatable.dart';
 
 class Link extends Equatable {
-  Link({this.id, this.type});
+  Link({
+    required this.id,
+    required this.type,
+  });
 
   final String id;
   final String type;

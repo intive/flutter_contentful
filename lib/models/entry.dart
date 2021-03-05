@@ -3,23 +3,23 @@ import 'system_fields.dart';
 
 abstract class Entry<T> extends Equatable {
   Entry({
-    this.sys,
+    required this.sys,
     this.fields,
   });
 
   final SystemFields sys;
-  final T fields;
+  final T? fields;
 
   @override
-  List<Object> get props => [sys, fields];
+  List<Object> get props => [sys, fields!];
 }
 
 class EntryCollection<T extends Entry> {
   EntryCollection({
-    this.total,
-    this.skip,
-    this.limit,
-    this.items,
+    required this.total,
+    required this.skip,
+    required this.limit,
+    required this.items,
   });
 
   final int total;

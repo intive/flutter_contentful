@@ -8,9 +8,7 @@ part of 'asset.dart';
 
 Asset _$AssetFromJson(Map<String, dynamic> json) {
   return Asset(
-    sys: json['sys'] == null
-        ? null
-        : SystemFields.fromJson(json['sys'] as Map<String, dynamic>),
+    sys: SystemFields.fromJson(json['sys'] as Map<String, dynamic>),
     fields: json['fields'] == null
         ? null
         : AssetFields.fromJson(json['fields'] as Map<String, dynamic>),
@@ -25,9 +23,7 @@ Map<String, dynamic> _$AssetToJson(Asset instance) => <String, dynamic>{
 AssetFields _$AssetFieldsFromJson(Map<String, dynamic> json) {
   return AssetFields(
     title: json['title'] as String,
-    file: json['file'] == null
-        ? null
-        : AssetFile.fromJson(json['file'] as Map<String, dynamic>),
+    file: AssetFile.fromJson(json['file'] as Map<String, dynamic>),
   );
 }
 
@@ -42,9 +38,7 @@ AssetFile _$AssetFileFromJson(Map<String, dynamic> json) {
     fileName: json['fileName'] as String,
     contentType: json['contentType'] as String,
     url: json['url'] as String,
-    details: json['details'] == null
-        ? null
-        : AssetFileDetails.fromJson(json['details'] as Map<String, dynamic>),
+    details: AssetFileDetails.fromJson(json['details'] as Map<String, dynamic>),
   );
 }
 
@@ -58,9 +52,8 @@ Map<String, dynamic> _$AssetFileToJson(AssetFile instance) => <String, dynamic>{
 AssetFileDetails _$AssetFileDetailsFromJson(Map<String, dynamic> json) {
   return AssetFileDetails(
     size: json['size'] as int,
-    image: json['image'] == null
-        ? null
-        : AssetFileDetailsImage.fromJson(json['image'] as Map<String, dynamic>),
+    image:
+        AssetFileDetailsImage.fromJson(json['image'] as Map<String, dynamic>),
   );
 }
 

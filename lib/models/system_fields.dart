@@ -9,26 +9,37 @@ class SystemFields extends Equatable {
   SystemFields({
     required this.id,
     required this.type,
-    required this.space,
-    required this.contentType,
-    required this.revision,
-    required this.createdAt,
-    required this.updatedAt,
-    required this.locale,
+    this.space,
+    this.contentType,
+    this.linkType,
+    this.revision,
+    this.createdAt,
+    this.updatedAt,
+    this.locale,
   });
 
   final String id;
   final String type;
-  final Link space;
-  final Link contentType;
-  final int revision;
-  final DateTime createdAt;
-  final DateTime updatedAt;
-  final String locale;
+  final Link? space;
+  final Link? contentType;
+  final String? linkType;
+  final int? revision;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
+  final String? locale;
 
   @override
-  List<Object> get props =>
-      [id, type, space, contentType, revision, createdAt, updatedAt, locale];
+  List<Object> get props => [
+        id,
+        type,
+        space!,
+        contentType!,
+        linkType!,
+        revision!,
+        createdAt!,
+        updatedAt!,
+        locale!
+      ];
 
   factory SystemFields.fromJson(Map<String, dynamic> json) =>
       _$SystemFieldsFromJson(json);

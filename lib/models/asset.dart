@@ -26,7 +26,7 @@ class AssetFields extends Equatable {
   final AssetFile file;
 
   @override
-  List<Object> get props => [title, file];
+  List<Object?> get props => [title, file];
 
   factory AssetFields.fromJson(Map<String, dynamic> json) =>
       _$AssetFieldsFromJson(json);
@@ -49,7 +49,7 @@ class AssetFile extends Equatable {
   final AssetFileDetails details;
 
   @override
-  List<Object> get props => [fileName, contentType, url, details];
+  List<Object?> get props => [fileName, contentType, url, details];
 
   factory AssetFile.fromJson(Map<String, dynamic> json) =>
       _$AssetFileFromJson(json);
@@ -68,7 +68,7 @@ class AssetFileDetails extends Equatable {
   final AssetFileDetailsImage image;
 
   @override
-  List<Object> get props => [size, image];
+  List<Object?> get props => [size, image];
 
   factory AssetFileDetails.fromJson(Map<String, dynamic> json) =>
       _$AssetFileDetailsFromJson(json);
@@ -87,7 +87,7 @@ class AssetFileDetailsImage extends Equatable {
   final int width;
 
   @override
-  List<Object> get props => [height, width];
+  List<Object?> get props => [height, width];
 
   factory AssetFileDetailsImage.fromJson(Map<String, dynamic> json) =>
       _$AssetFileDetailsImageFromJson(json);

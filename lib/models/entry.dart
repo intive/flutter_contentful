@@ -11,7 +11,7 @@ abstract class Entry<T> extends Equatable {
   final T? fields;
 
   @override
-  List<Object> get props => [sys, fields!];
+  List<Object?> get props => [sys, fields];
 }
 
 class EntryCollection<T extends Entry> {

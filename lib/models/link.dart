@@ -10,7 +10,7 @@ class Link extends Equatable {
   final String type;
 
   @override
-  List<Object> get props => [id, type];
+  List<Object?> get props => [id, type];
 
   factory Link.fromJson(Map<String, dynamic> json) {
     return Link(

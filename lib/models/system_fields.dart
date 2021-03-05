@@ -29,16 +29,16 @@ class SystemFields extends Equatable {
   final String? locale;
 
   @override
-  List<Object> get props => [
+  List<Object?> get props => [
         id,
         type,
-        space!,
-        contentType!,
-        linkType!,
-        revision!,
-        createdAt!,
-        updatedAt!,
-        locale!
+        space,
+        contentType,
+        linkType,
+        revision,
+        createdAt,
+        updatedAt,
+        locale
       ];
 
   factory SystemFields.fromJson(Map<String, dynamic> json) =>

@@ -27,24 +27,28 @@ class Client {
     String spaceId,
     String accessToken, {
     String host = 'cdn.contentful.com',
+    String environment = 'master',
   }) {
     final client = HttpClient(accessToken);
-    return Client._(client, spaceId, host: host);
+    return Client._(client, spaceId, host: host, environment: environment);
   }
+
   Client._(
     this._client,
     this.spaceId, {
     required this.host,
+    this.environment = 'master',
   });
 
   final HttpClient _client;
   final String spaceId;
   final String host;
+  final String environment;
 
   Uri _uri(String path, {Map<String, dynamic>? params}) => Uri(
         scheme: 'https',
         host: host,
-        path: '/spaces/$spaceId/environments/master$path',
+        path: '/spaces/$spaceId/environments/$environment$path',
         queryParameters: params,
       );
 

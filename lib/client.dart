@@ -37,7 +37,7 @@ class Client {
     this._client,
     this.spaceId, {
     required this.host,
-    this.environment = 'master',
+    required this.environment,
   });
 
   final HttpClient _client;

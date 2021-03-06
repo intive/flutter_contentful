@@ -61,11 +61,11 @@ class AssetFile extends Equatable {
 class AssetFileDetails extends Equatable {
   AssetFileDetails({
     required this.size,
-    required this.image,
+    this.image,
   });
 
   final int size;
-  final AssetFileDetailsImage image;
+  final AssetFileDetailsImage? image;
 
   @override
   List<Object?> get props => [size, image];

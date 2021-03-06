@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:contentful/includes.dart';
 import 'package:dartz/dartz.dart';
 import 'package:http/http.dart' as http;
+import 'package:contentful/lib/conversion.dart' as C;
 import 'package:contentful/models/entry.dart';
 
 class HttpClient extends http.BaseClient {
@@ -80,13 +81,17 @@ class Client {
     Map<String, dynamic> jsonr = json.decode(utf8.decode(response.bodyBytes));
 
     // If it has includes, then resolve all the links inside the items
-    jsonr = optionOf<Map<String, List<dynamic>>>(jsonr['includes']).fold(
-      () => jsonr,
-      (includes) => {
-        ...jsonr,
-        'items': Includes.fromJson(includes).resolveLinks(jsonr['items']),
-      },
-    );
+    jsonr = optionOf(jsonr['includes'])
+        .map(C.map)
+        .map(Includes.fromJson)
+        .map((includes) => includes.resolveLinks(jsonr['items']))
+        .fold(
+          () => jsonr,
+          (items) => {
+            ...jsonr,
+            'items': items,
+          },
+        );
 
     return EntryCollection.fromJson(jsonr, fromJson);
   }

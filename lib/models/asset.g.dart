@@ -52,8 +52,9 @@ Map<String, dynamic> _$AssetFileToJson(AssetFile instance) => <String, dynamic>{
 AssetFileDetails _$AssetFileDetailsFromJson(Map<String, dynamic> json) {
   return AssetFileDetails(
     size: json['size'] as int,
-    image:
-        AssetFileDetailsImage.fromJson(json['image'] as Map<String, dynamic>),
+    image: json['image'] == null
+        ? null
+        : AssetFileDetailsImage.fromJson(json['image'] as Map<String, dynamic>),
   );
 }
 

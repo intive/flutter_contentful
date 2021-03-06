@@ -1,8 +1,6 @@
 import 'package:dartz/dartz.dart';
+import 'package:contentful/lib/conversion.dart' as C;
 import 'package:contentful/lib/entry.dart' as E;
-
-Map<String, dynamic> _ensureMap(dynamic input) =>
-    Map<String, dynamic>.from(input);
 
 bool _isListOfLinks(dynamic list) {
   if (list is! List) {
@@ -19,14 +17,14 @@ bool _isListOfLinks(dynamic list) {
 }
 
 class Includes {
-  factory Includes.fromJson(Map<String, List<dynamic>> json) =>
+  static Includes fromJson(Map<String, dynamic> json) =>
       Includes._(_IncludesMap.fromJson(json));
 
   Includes._(this.map);
   final _IncludesMap map;
 
   List<Map<String, dynamic>> resolveLinks(List<dynamic> items) =>
-      items.map(_ensureMap).map(_walkMap).toList();
+      items.map(C.map).map(_walkMap).toList();
 
   Map<String, dynamic> _walkMap(Map<String, dynamic> entry) => E.isLink(entry)
       ? map.resolveLink(entry).fold(() => entry, _walkMap)
@@ -42,7 +40,7 @@ class Includes {
       _isListOfLinks(fields)
           ? MapEntry(key, resolveLinks(fields))
           : option(fields is Map, fields)
-              .map(_ensureMap)
+              .map(C.map)
               .filter(E.isLink)
               .bind(map.resolveLink)
               .map(_walkMap)
@@ -53,18 +51,18 @@ class Includes {
 }
 
 class _IncludesMap {
-  factory _IncludesMap.fromJson(Map<String, List<dynamic>> includes) =>
+  factory _IncludesMap.fromJson(Map<String, dynamic> includes) =>
       _IncludesMap._(
-        includes.values.fold(
-          IHashMap.empty(),
-          (map, entries) => entries.map(_ensureMap).fold(
+        includes.values.map(C.listOfMaps).fold(
+              IHashMap.empty(),
+              (map, entries) => entries.fold(
                 map,
                 (map, entry) => E.id(entry).fold(
                       () => map,
                       (id) => map.put(id, entry),
                     ),
               ),
-        ),
+            ),
       );
 
   _IncludesMap._(this._map);

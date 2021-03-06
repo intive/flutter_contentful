@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:contentful/includes.dart';
 import 'package:dartz/dartz.dart';
 import 'package:http/http.dart' as http;
-import 'package:contentful/lib/entry.dart' as E;
 import 'package:contentful/models/entry.dart';
 
 class HttpClient extends http.BaseClient {
@@ -77,90 +77,17 @@ class Client {
       throw Exception('getEntries failed');
     }
 
-    dynamic jsonr = json.decode(utf8.decode(response.bodyBytes));
-    if (jsonr['includes'] != null) {
-      final includes = Includes.fromJson(jsonr['includes']);
-      jsonr['items'] = includes.resolveLinks(jsonr['items']);
-    }
+    Map<String, dynamic> jsonr = json.decode(utf8.decode(response.bodyBytes));
+
+    // If it has includes, then resolve all the links inside the items
+    jsonr = optionOf<Map<String, List<dynamic>>>(jsonr['includes']).fold(
+      () => jsonr,
+      (includes) => {
+        ...jsonr,
+        'items': Includes.fromJson(includes).resolveLinks(jsonr['items']),
+      },
+    );
 
     return EntryCollection.fromJson(jsonr, fromJson);
-  }
-}
-
-bool _isListOfLinks(List<dynamic> list) {
-  if (list.isEmpty) {
-    return false;
-  }
-
-  if (!(list.first is Map)) {
-    return false;
-  }
-
-  return E.isLink(list.first);
-}
-
-class Includes {
-  factory Includes.fromJson(Map<String, dynamic> json) =>
-      Includes(IncludesMap.fromJson(json));
-
-  Includes(this.map);
-  final IncludesMap map;
-
-  MapEntry<String, dynamic> _resolveFieldEntry(String key, dynamic fieldJson) =>
-      some(fieldJson)
-          .filter((fieldJson) => fieldJson is List && _isListOfLinks(fieldJson))
-          .map((fieldJson) => MapEntry<String, dynamic>(
-                key,
-                resolveLinks(fieldJson),
-              ))
-          .orElse(() => some(fieldJson)
-              .filter((field) => field is Map)
-              .map((field) => Map<String, dynamic>.from(field))
-              .filter(E.isLink)
-              .map((field) => map.resolveLink(field) | field)
-              .map(_walkMap)
-              .map((field) => MapEntry(key, field)))
-          .getOrElse(() => MapEntry(key, fieldJson));
-
-  Map<String, dynamic> _walkMap(Map<String, dynamic> entry) {
-    if (E.isLink(entry)) {
-      return map.resolveLink(entry).map(_walkMap) | entry;
-    }
-
-    return E.fields(entry).fold(() => entry, (fields) {
-      entry['fields'] = fields.map(_resolveFieldEntry);
-      return entry;
-    });
-  }
-
-  List<Map<String, dynamic>> resolveLinks(List<dynamic> items) => items
-      .map((item) => Map<String, dynamic>.from(item))
-      .map((item) => _walkMap(item))
-      .toList();
-}
-
-Iterable<MapEntry<String, Map<String, dynamic>>> _mapEntriesFromList(
-  Iterable<dynamic> list,
-) =>
-    list
-        .map((json) => Map<String, dynamic>.from(json))
-        .map((entry) => MapEntry(E.id(entry) | '', entry));
-
-class IncludesMap {
-  factory IncludesMap.fromJson(Map<String, dynamic> includes) => IncludesMap(
-        includes.map((type, entriesForType) => MapEntry(
-              type,
-              Map.fromEntries(_mapEntriesFromList(entriesForType)),
-            )),
-      );
-
-  IncludesMap(this._map);
-
-  final Map<String, Map<String, Map<String, dynamic>>> _map;
-
-  Option<Map<String, dynamic>> resolveLink(Map<String, dynamic> link) {
-    final String type = link['sys']['linkType'];
-    final String id = link['sys']['id'];
-    return optionOf(_map[type]?[id]);
   }
 }

@@ -59,15 +59,15 @@ void main() {
       },
     };
 
-    final includes = Includes.fromJson({
-      'Entry': [
-        linkedEntry,
-        linkedEntry2,
-        linkedEntryWithLinks,
-      ],
-    });
-
     test('links should be resolved', () {
+      final includes = Includes.fromJson({
+        'Entry': [
+          linkedEntry,
+          linkedEntry2,
+          linkedEntryWithLinks,
+        ],
+      });
+
       final linkingList = [
         {
           'sys': {
@@ -94,14 +94,62 @@ void main() {
             'id': 'B',
           },
           'fields': {
+            'links': [linkedEntry],
+            'nestedLinks': {
+              ...linkedEntryWithLinks,
+              'fields': {
+                'title': 'title',
+                'child': linkedEntry2,
+                'children': [linkedEntry, linkedEntry2],
+              },
+            }
+          },
+        }
+      ];
+
+      final resolvedList = includes.resolveLinks(linkingList);
+
+      expect(deepEq(resolvedList, expectedList), true);
+    });
+
+    test('links should be resolved again', () {
+      final includes = Includes.fromJson({
+        'Entry': [
+          linkedEntry,
+          linkedEntry2,
+          linkedEntryWithLinks,
+        ],
+      });
+
+      final linkingList = [
+        {
+          'sys': {
+            'type': 'Entry',
+            'id': 'B',
+          },
+          'fields': {
             'links': [
-              linkedEntry,
+              {
+                'sys': {'type': 'Link', 'linkType': 'Entry', 'id': 'A'}
+              },
             ],
             'nestedLinks': {
-              'sys': {
-                'type': 'Entry',
-                'id': 'C',
-              },
+              'sys': {'type': 'Link', 'linkType': 'Entry', 'id': 'C'}
+            },
+          },
+        }
+      ];
+
+      final expectedList = [
+        {
+          'sys': {
+            'type': 'Entry',
+            'id': 'B',
+          },
+          'fields': {
+            'links': [linkedEntry],
+            'nestedLinks': {
+              ...linkedEntryWithLinks,
               'fields': {
                 'title': 'title',
                 'child': linkedEntry2,
@@ -118,6 +166,8 @@ void main() {
     });
 
     test('list of strings should be preserved', () {
+      final includes = Includes.fromJson({});
+
       final linkingList = [
         {
           'sys': {

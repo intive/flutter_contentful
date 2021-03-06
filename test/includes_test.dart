@@ -1,6 +1,6 @@
 import 'package:test/test.dart';
 import 'package:collection/collection.dart';
-import 'package:contentful/client.dart';
+import 'package:contentful/includes.dart';
 
 void main() {
   Function deepEq = const DeepCollectionEquality().equals;
@@ -16,13 +16,56 @@ void main() {
       },
     };
 
-    final includes = Includes.fromJson({
-      "Entry": [linkedEntry],
-    });
-
-    final linkToEntry = {
-      "sys": {"type": "Link", "linkType": "Entry", "id": "A"},
+    final Map<String, Map<String, dynamic>> linkedEntry2 = {
+      "sys": {
+        "type": "Entry",
+        "id": "B",
+      },
+      "fields": {
+        "title": "title2",
+      },
     };
+
+    final Map<String, Map<String, dynamic>> linkedEntryWithLinks = {
+      "sys": {
+        "type": "Entry",
+        "id": "C",
+      },
+      "fields": {
+        "title": "title",
+        "child": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Entry",
+            "id": "B",
+          }
+        },
+        "children": [
+          {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "A",
+            }
+          },
+          {
+            "sys": {
+              "type": "Link",
+              "linkType": "Entry",
+              "id": "B",
+            }
+          },
+        ]
+      },
+    };
+
+    final includes = Includes.fromJson({
+      "Entry": [
+        linkedEntry,
+        linkedEntry2,
+        linkedEntryWithLinks,
+      ],
+    });
 
     test('links should be resolved', () {
       final linkingList = [
@@ -33,8 +76,13 @@ void main() {
           },
           "fields": {
             "links": [
-              linkToEntry,
+              {
+                "sys": {"type": "Link", "linkType": "Entry", "id": "A"}
+              },
             ],
+            "nestedLinks": {
+              "sys": {"type": "Link", "linkType": "Entry", "id": "C"}
+            },
           },
         }
       ];
@@ -49,6 +97,17 @@ void main() {
             "links": [
               linkedEntry,
             ],
+            "nestedLinks": {
+              "sys": {
+                "type": "Entry",
+                "id": "C",
+              },
+              "fields": {
+                "title": "title",
+                "child": linkedEntry2,
+                "children": [linkedEntry, linkedEntry2],
+              },
+            }
           },
         }
       ];

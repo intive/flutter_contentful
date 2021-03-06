@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:contentful/includes.dart';
 import 'package:dartz/dartz.dart';
 import 'package:http/http.dart' as http;
-import 'package:contentful/lib/conversion.dart' as C;
+import 'package:contentful/lib/conversion.dart' as convert;
 import 'package:contentful/models/entry.dart';
 
 class HttpClient extends http.BaseClient {
@@ -54,7 +54,7 @@ class Client {
       );
 
   void close() {
-    this._client.close();
+    _client.close();
   }
 
   Future<T> getEntry<T extends Entry>(
@@ -82,7 +82,7 @@ class Client {
 
     // If it has includes, then resolve all the links inside the items
     jsonr = optionOf(jsonr['includes'])
-        .map(C.map)
+        .map(convert.map)
         .map(Includes.fromJson)
         .map((includes) => includes.resolveLinks(jsonr['items']))
         .fold(

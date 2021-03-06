@@ -6,53 +6,53 @@ void main() {
   Function deepEq = const DeepCollectionEquality().equals;
 
   group('Includes', () {
-    final Map<String, Map<String, dynamic>> linkedEntry = {
-      "sys": {
-        "type": "Entry",
-        "id": "A",
+    final linkedEntry = {
+      'sys': {
+        'type': 'Entry',
+        'id': 'A',
       },
-      "fields": {
-        "title": "title",
-      },
-    };
-
-    final Map<String, Map<String, dynamic>> linkedEntry2 = {
-      "sys": {
-        "type": "Entry",
-        "id": "B",
-      },
-      "fields": {
-        "title": "title2",
+      'fields': {
+        'title': 'title',
       },
     };
 
-    final Map<String, Map<String, dynamic>> linkedEntryWithLinks = {
-      "sys": {
-        "type": "Entry",
-        "id": "C",
+    final linkedEntry2 = {
+      'sys': {
+        'type': 'Entry',
+        'id': 'B',
       },
-      "fields": {
-        "title": "title",
-        "child": {
-          "sys": {
-            "type": "Link",
-            "linkType": "Entry",
-            "id": "B",
+      'fields': {
+        'title': 'title2',
+      },
+    };
+
+    final linkedEntryWithLinks = {
+      'sys': {
+        'type': 'Entry',
+        'id': 'C',
+      },
+      'fields': {
+        'title': 'title',
+        'child': {
+          'sys': {
+            'type': 'Link',
+            'linkType': 'Entry',
+            'id': 'B',
           }
         },
-        "children": [
+        'children': [
           {
-            "sys": {
-              "type": "Link",
-              "linkType": "Entry",
-              "id": "A",
+            'sys': {
+              'type': 'Link',
+              'linkType': 'Entry',
+              'id': 'A',
             }
           },
           {
-            "sys": {
-              "type": "Link",
-              "linkType": "Entry",
-              "id": "B",
+            'sys': {
+              'type': 'Link',
+              'linkType': 'Entry',
+              'id': 'B',
             }
           },
         ]
@@ -60,7 +60,7 @@ void main() {
     };
 
     final includes = Includes.fromJson({
-      "Entry": [
+      'Entry': [
         linkedEntry,
         linkedEntry2,
         linkedEntryWithLinks,
@@ -70,18 +70,18 @@ void main() {
     test('links should be resolved', () {
       final linkingList = [
         {
-          "sys": {
-            "type": "Entry",
-            "id": "B",
+          'sys': {
+            'type': 'Entry',
+            'id': 'B',
           },
-          "fields": {
-            "links": [
+          'fields': {
+            'links': [
               {
-                "sys": {"type": "Link", "linkType": "Entry", "id": "A"}
+                'sys': {'type': 'Link', 'linkType': 'Entry', 'id': 'A'}
               },
             ],
-            "nestedLinks": {
-              "sys": {"type": "Link", "linkType": "Entry", "id": "C"}
+            'nestedLinks': {
+              'sys': {'type': 'Link', 'linkType': 'Entry', 'id': 'C'}
             },
           },
         }
@@ -89,23 +89,23 @@ void main() {
 
       final expectedList = [
         {
-          "sys": {
-            "type": "Entry",
-            "id": "B",
+          'sys': {
+            'type': 'Entry',
+            'id': 'B',
           },
-          "fields": {
-            "links": [
+          'fields': {
+            'links': [
               linkedEntry,
             ],
-            "nestedLinks": {
-              "sys": {
-                "type": "Entry",
-                "id": "C",
+            'nestedLinks': {
+              'sys': {
+                'type': 'Entry',
+                'id': 'C',
               },
-              "fields": {
-                "title": "title",
-                "child": linkedEntry2,
-                "children": [linkedEntry, linkedEntry2],
+              'fields': {
+                'title': 'title',
+                'child': linkedEntry2,
+                'children': [linkedEntry, linkedEntry2],
               },
             }
           },
@@ -120,24 +120,24 @@ void main() {
     test('list of strings should be preserved', () {
       final linkingList = [
         {
-          "sys": {
-            "type": "Entry",
-            "id": "B",
+          'sys': {
+            'type': 'Entry',
+            'id': 'B',
           },
-          "fields": {
-            "stringlist": ["str1", "str2"],
+          'fields': {
+            'stringlist': ['str1', 'str2'],
           },
         }
       ];
 
       final expectedList = [
         {
-          "sys": {
-            "type": "Entry",
-            "id": "B",
+          'sys': {
+            'type': 'Entry',
+            'id': 'B',
           },
-          "fields": {
-            "stringlist": ["str1", "str2"],
+          'fields': {
+            'stringlist': ['str1', 'str2'],
           },
         }
       ];

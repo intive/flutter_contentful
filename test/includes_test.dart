@@ -196,5 +196,130 @@ void main() {
 
       expect(deepEq(resolvedList, expectedList), true);
     });
+
+    test('rich text with links should be resolved', () {
+      final includes = Includes.fromJson({
+        'Entry': [
+          linkedEntry,
+        ],
+      });
+
+      final linkingList = [
+        {
+          'sys': {
+            'type': 'Entry',
+            'id': 'B',
+          },
+          'fields': {
+            'body': {
+              'nodeType': 'document',
+              'data': {},
+              'content': [
+                {
+                  'nodeType': 'paragraph',
+                  'content': [
+                    {
+                      'nodeType': 'text',
+                      'value': 'Here is some content',
+                      'marks': [],
+                      'data': {}
+                    }
+                  ],
+                  'data': {}
+                },
+                {
+                  'nodeType': 'paragraph',
+                  'content': [
+                    {
+                      'nodeType': 'text',
+                      'value': 'Here is some bold content',
+                      'marks': [
+                        {'type': 'bold'}
+                      ],
+                      'data': {}
+                    }
+                  ],
+                  'data': {}
+                },
+                {
+                  'nodeType': 'embedded-asset-block',
+                  'content': [],
+                  'data': {
+                    'target': {
+                      'sys': {'id': 'A', 'type': 'Link', 'linkType': 'Asset'}
+                    }
+                  }
+                },
+                {
+                  'nodeType': 'paragraph',
+                  'content': [
+                    {'nodeType': 'text', 'value': '', 'marks': [], 'data': {}}
+                  ],
+                  'data': {}
+                }
+              ]
+            }
+          },
+        }
+      ];
+
+      final expectedList = [
+        {
+          'sys': {
+            'type': 'Entry',
+            'id': 'B',
+          },
+          'fields': {
+            'body': {
+              'nodeType': 'document',
+              'data': {},
+              'content': [
+                {
+                  'nodeType': 'paragraph',
+                  'content': [
+                    {
+                      'nodeType': 'text',
+                      'value': 'Here is some content',
+                      'marks': [],
+                      'data': {}
+                    }
+                  ],
+                  'data': {}
+                },
+                {
+                  'nodeType': 'paragraph',
+                  'content': [
+                    {
+                      'nodeType': 'text',
+                      'value': 'Here is some bold content',
+                      'marks': [
+                        {'type': 'bold'}
+                      ],
+                      'data': {}
+                    }
+                  ],
+                  'data': {}
+                },
+                {
+                  'nodeType': 'embedded-asset-block',
+                  'content': [],
+                  'data': {'target': linkedEntry}
+                },
+                {
+                  'nodeType': 'paragraph',
+                  'content': [
+                    {'nodeType': 'text', 'value': '', 'marks': [], 'data': {}}
+                  ],
+                  'data': {}
+                }
+              ]
+            }
+          },
+        }
+      ];
+
+      final resolvedList = includes.resolveLinks(linkingList);
+      expect(deepEq(resolvedList, expectedList), true);
+    });
   });
 }

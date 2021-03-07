@@ -33,22 +33,49 @@ class Includes {
                 () => entry,
                 (fields) => {
                   ...entry,
-                  'fields': fields.map(_resolveEntryFields),
+                  'fields': fields.map(_resolveEntryField),
                 },
               );
 
-  MapEntry<String, dynamic> _resolveEntryFields(String key, dynamic object) =>
-      _isListOfLinks(object)
-          ? MapEntry(key, resolveLinks(object))
-          : option(object is Map, object)
-              .map(convert.map)
-              .filter(entry_utils.isLink)
-              .bind(map.resolveLink)
-              .map(_walkMap)
-              .fold(
-                () => MapEntry(key, object),
-                (entry) => MapEntry(key, entry),
-              );
+  MapEntry<String, dynamic> _resolveEntryField(String key, dynamic object) {
+    if (_isListOfLinks(object)) {
+      return MapEntry(key, resolveLinks(object));
+    } else if (object is! Map) {
+      return MapEntry(key, object);
+    }
+
+    final fieldMap = some(convert.map(object));
+    final resolvedLink =
+        fieldMap.filter(entry_utils.isLink).bind(map.resolveLink).map(_walkMap);
+    final resolvedRichText =
+        fieldMap.filter(entry_utils.isRichText).map(_walkRichText);
+
+    return resolvedLink.orElse(() => resolvedRichText).fold(
+          () => MapEntry(key, object),
+          (field) => MapEntry(key, field),
+        );
+  }
+
+  Map<String, dynamic> _walkRichText(Map<String, dynamic> doc) {
+    final root = {
+      ...doc,
+      'data': entry_utils
+          .dataTarget(doc)
+          .bind(map.resolveLink)
+          .fold(() => {}, (entry) => {'target': entry}),
+    };
+
+    return entry_utils
+        .contentList(doc)
+        .map((nodes) => nodes.map(_walkRichText))
+        .fold(
+          () => root,
+          (nodes) => {
+            ...root,
+            'content': nodes.toList(),
+          },
+        );
+  }
 }
 
 class _IncludesMap {

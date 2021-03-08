@@ -45,12 +45,12 @@ class Includes {
     }
 
     final fieldMap = some(convert.map(object));
-    final resolvedLink =
+    final resolveLink = () =>
         fieldMap.filter(entry_utils.isLink).bind(map.resolveLink).map(_walkMap);
-    final resolvedRichText =
-        fieldMap.filter(entry_utils.isRichText).map(_walkRichText);
+    final resolveRichText =
+        () => fieldMap.filter(entry_utils.isRichText).map(_walkRichText);
 
-    return resolvedLink.orElse(() => resolvedRichText).fold(
+    return resolveLink().orElse(resolveRichText).fold(
           () => MapEntry(key, object),
           (field) => MapEntry(key, field),
         );

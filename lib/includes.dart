@@ -78,22 +78,24 @@ class Includes {
   }
 }
 
+Map<String, Map<String, dynamic>> _addEntriesToMap(
+        Map<String, Map<String, dynamic>> map,
+        List<Map<String, dynamic>> entries) =>
+    entries.fold(
+      map,
+      (map, entry) => entry_utils.id(entry).fold(
+        () => map,
+        (id) {
+          map[id] = entry;
+          return map;
+        },
+      ),
+    );
+
 class _IncludesMap {
   factory _IncludesMap.fromJson(Map<String, dynamic> includes) =>
       _IncludesMap._(
-        includes.values.map(convert.listOfMaps).fold(
-          {},
-          (map, entries) => entries.fold(
-            map,
-            (map, entry) => entry_utils.id(entry).fold(
-              () => map,
-              (id) {
-                map[id] = entry;
-                return map;
-              },
-            ),
-          ),
-        ),
+        includes.values.map(convert.listOfMaps).fold({}, _addEntriesToMap),
       );
 
   _IncludesMap._(this._map);

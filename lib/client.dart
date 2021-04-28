@@ -6,12 +6,15 @@ import 'package:http/http.dart' as http;
 import 'package:contentful/lib/conversion.dart' as convert;
 import 'package:contentful/models/entry.dart';
 
-class HttpClient extends http.BaseClient {
-  factory HttpClient(String accessToken) {
-    final client = http.Client();
-    return HttpClient._internal(client, accessToken);
-  }
-  HttpClient._internal(this._inner, this.accessToken);
+abstract class ContentfulHTTPClient {
+  Future<http.Response> get(Uri url, {Map<String, String>? headers});
+  void close();
+}
+
+class HttpClient extends http.BaseClient implements ContentfulHTTPClient {
+  HttpClient(String accessToken)
+      : _inner = http.Client(),
+        accessToken = accessToken;
 
   final http.Client _inner;
   final String accessToken;
@@ -24,45 +27,60 @@ class HttpClient extends http.BaseClient {
 }
 
 class Client {
-  factory Client(
+  static ContentfulHTTPClient _defaultHTTPClient(String token) =>
+      HttpClient(token);
+
+  Client(
     String spaceId,
     String accessToken, {
     String host = 'cdn.contentful.com',
     String environment = 'master',
-  }) {
-    final client = HttpClient(accessToken);
-    return Client._(client, spaceId, host: host, environment: environment);
-  }
+    ContentfulHTTPClient Function(String) httpClient =
+        Client._defaultHTTPClient,
+  }) : this.resolvingAgainstBaseURL(
+          spaceId: spaceId,
+          accessToken: accessToken,
+          baseURL: Uri(
+            scheme: 'https',
+            host: host,
+          ),
+          environment: environment,
+          httpClient: httpClient,
+        );
 
-  Client._(
-    this._client,
-    this.spaceId, {
-    required this.host,
-    required this.environment,
-  });
+  Client.resolvingAgainstBaseURL({
+    required String spaceId,
+    required String accessToken,
+    required Uri baseURL,
+    String environment = 'master',
+    ContentfulHTTPClient Function(String) httpClient =
+        Client._defaultHTTPClient,
+  })  : _httpClient = httpClient(accessToken),
+        baseURL = baseURL,
+        spaceId = spaceId,
+        environment = environment;
 
-  final HttpClient _client;
+  final ContentfulHTTPClient _httpClient;
   final String spaceId;
-  final String host;
+  final Uri baseURL;
   final String environment;
 
-  Uri _uri(String path, {Map<String, dynamic>? params}) => Uri(
-        scheme: 'https',
-        host: host,
-        path: '/spaces/$spaceId/environments/$environment$path',
-        queryParameters: params,
+  Uri _uri(String path, {Map<String, dynamic>? params}) => baseURL.resolveUri(
+        Uri(
+          path: 'spaces/$spaceId/environments/$environment$path',
+          queryParameters: params,
+        ),
       );
 
-  void close() {
-    _client.close();
-  }
+  void close() => _httpClient.close();
 
   Future<T> getEntry<T extends Entry>(
     String id,
     T Function(Map<String, dynamic>) fromJson, {
     Map<String, dynamic>? params,
   }) async {
-    final response = await _client.get(_uri('/entries/$id', params: params));
+    final response =
+        await _httpClient.get(_uri('/entries/$id', params: params));
     if (response.statusCode != 200) {
       throw Exception('getEntry failed');
     }
@@ -73,7 +91,7 @@ class Client {
     Map<String, dynamic> query,
     T Function(Map<String, dynamic>) fromJson,
   ) async {
-    final response = await _client.get(_uri('/entries', params: query));
+    final response = await _httpClient.get(_uri('/entries', params: query));
     if (response.statusCode != 200) {
       throw Exception('getEntries failed');
     }

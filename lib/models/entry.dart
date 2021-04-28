@@ -14,7 +14,7 @@ abstract class Entry<T> extends Equatable {
   List<Object?> get props => [sys, fields];
 }
 
-class EntryCollection<T extends Entry> {
+class EntryCollection<T extends Entry> extends Equatable {
   EntryCollection({
     required this.total,
     required this.skip,
@@ -37,4 +37,7 @@ class EntryCollection<T extends Entry> {
         limit: json['limit'],
         items: json['items'].map<T>((jsonItem) => fromJson(jsonItem)).toList(),
       );
+
+  @override
+  List<Object?> get props => [total, skip, limit, items];
 }

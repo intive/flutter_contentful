@@ -41,48 +41,40 @@ class TestFields extends Equatable {
 void main() {
   final httpClientMock = ContentfulHTTPClientMock();
   final spaceID = 'spaceID';
-  final accessToken = 'accessToken';
   final host = 'host.com';
   final environment = 'environment';
   final entryType = 'test';
-
-  test('[constructor] initialises a HTTPClient', () {
-    var buildHTTPClientCalled = false;
-
-    final _ = Client(
-      spaceID,
-      accessToken,
-      host: host,
-      environment: environment,
-      httpClient: (token) {
-        buildHTTPClientCalled = true;
-        expect(token, equals(accessToken));
-        return httpClientMock;
-      },
-    );
-
-    expect(buildHTTPClientCalled, true);
-  });
+  final baseUrl = Uri.https(host, 'some-custom-path/');
+  final contentfulHost = 'cdn.contentful.com';
 
   group('[getEntry]', () {
     final entryID = '1';
 
     final queryParameters = {'flag': 'true'};
 
+    final testData =
+        '{"sys": { "id": "$entryID", "type": "$entryType" }, "fields": { "value": 1 }}';
+
+    final expectedEntry = TestEntry(
+      SystemFields(id: entryID, type: 'test'),
+      TestFields(1, null),
+    );
+
     final expectedUrl = Uri(
       scheme: 'https',
       host: host,
-      path: 'spaces/$spaceID/environments/$environment/entries/$entryID',
+      path:
+          'some-custom-path/spaces/$spaceID/environments/$environment/entries/$entryID',
       queryParameters: queryParameters,
     );
 
-    test('on success, exposes parsed data', () async {
-      final testData =
-          '{"sys": { "id": "$entryID", "type": "$entryType" }, "fields": { "value": 1 }}';
-
-      final expectedEntry = TestEntry(
-        SystemFields(id: entryID, type: 'test'),
-        TestFields(1, null),
+    test('uses default contentful host baseURL, when no baseURL is passed',
+        () async {
+      final expectedUrl = Uri(
+        scheme: 'https',
+        host: contentfulHost,
+        path: 'spaces/$spaceID/environments/$environment/entries/$entryID',
+        queryParameters: queryParameters,
       );
 
       final response = http.Response(testData, 200);
@@ -90,12 +82,32 @@ void main() {
       when(() => httpClientMock.get(expectedUrl))
           .thenAnswer((_) async => response);
 
-      final sut = Client(
-        spaceID,
-        accessToken,
-        host: host,
+      final sut = Client.performingRequestsUsing(
+        httpClient: httpClientMock,
+        spaceId: spaceID,
         environment: environment,
-        httpClient: (_) => httpClientMock,
+      );
+
+      await sut.getEntry(
+        entryID,
+        TestEntry.fromJson,
+        params: queryParameters,
+      );
+
+      verify(() => httpClientMock.get(expectedUrl)).called(1);
+    });
+
+    test('on success, exposes parsed data', () async {
+      final response = http.Response(testData, 200);
+
+      when(() => httpClientMock.get(expectedUrl))
+          .thenAnswer((_) async => response);
+
+      final sut = Client.performingRequestsUsing(
+        httpClient: httpClientMock,
+        baseURL: baseUrl,
+        spaceId: spaceID,
+        environment: environment,
       );
 
       final fetchedEntry = await sut.getEntry(
@@ -114,12 +126,11 @@ void main() {
       when(() => httpClientMock.get(expectedUrl))
           .thenAnswer((_) async => response);
 
-      final sut = Client(
-        spaceID,
-        accessToken,
-        host: host,
+      final sut = Client.performingRequestsUsing(
+        httpClient: httpClientMock,
+        baseURL: baseUrl,
+        spaceId: spaceID,
         environment: environment,
-        httpClient: (_) => httpClientMock,
       );
 
       try {
@@ -143,31 +154,31 @@ void main() {
     final expectedUrl = Uri(
       scheme: 'https',
       host: host,
-      path: 'spaces/$spaceID/environments/$environment/entries',
+      path:
+          'some-custom-path/spaces/$spaceID/environments/$environment/entries',
       queryParameters: queryParameters,
     );
     final firstEntryID = 'A';
     final secondEntryID = 'B';
 
-    test('on success, exposes parsed data', () async {
-      final secondEntry = TestEntry(
-        SystemFields(id: secondEntryID, type: 'test'),
-        TestFields(1, null),
-      );
+    final secondEntry = TestEntry(
+      SystemFields(id: secondEntryID, type: 'test'),
+      TestFields(1, null),
+    );
 
-      final firstEntry = TestEntry(
-        SystemFields(id: firstEntryID, type: 'test'),
-        TestFields(1, secondEntry),
-      );
+    final firstEntry = TestEntry(
+      SystemFields(id: firstEntryID, type: 'test'),
+      TestFields(1, secondEntry),
+    );
 
-      final expectedEntries = EntryCollection<TestEntry>(
-        total: 2,
-        skip: 0,
-        limit: 0,
-        items: [firstEntry],
-      );
+    final expectedEntries = EntryCollection<TestEntry>(
+      total: 2,
+      skip: 0,
+      limit: 0,
+      items: [firstEntry],
+    );
 
-      final rawFirstEntry = '''
+    final rawFirstEntry = '''
           {
             "sys": { 
               "id": "$firstEntryID", 
@@ -186,7 +197,7 @@ void main() {
           }
       ''';
 
-      final rawSecondEntry = '''
+    final rawSecondEntry = '''
           {
             "sys": { 
               "id": "$secondEntryID", 
@@ -196,7 +207,7 @@ void main() {
           }
       ''';
 
-      final testData = '''
+    final testData = '''
             { 
               "total": 2,
               "skip": 0,
@@ -212,17 +223,44 @@ void main() {
             }
       ''';
 
+    test('uses default contentful host baseURL, when no baseURL is provided',
+        () async {
+      final expectedUrl = Uri(
+        scheme: 'https',
+        host: contentfulHost,
+        path: 'spaces/$spaceID/environments/$environment/entries',
+        queryParameters: queryParameters,
+      );
       final response = http.Response(testData, 200);
 
       when(() => httpClientMock.get(expectedUrl))
           .thenAnswer((_) async => response);
 
-      final sut = Client(
-        spaceID,
-        accessToken,
-        host: host,
+      final sut = Client.performingRequestsUsing(
+        httpClient: httpClientMock,
+        spaceId: spaceID,
         environment: environment,
-        httpClient: (_) => httpClientMock,
+      );
+
+      await sut.getEntries(
+        queryParameters,
+        TestEntry.fromJson,
+      );
+
+      verify(() => httpClientMock.get(expectedUrl)).called(1);
+    });
+
+    test('on success, exposes parsed data', () async {
+      final response = http.Response(testData, 200);
+
+      when(() => httpClientMock.get(expectedUrl))
+          .thenAnswer((_) async => response);
+
+      final sut = Client.performingRequestsUsing(
+        httpClient: httpClientMock,
+        baseURL: baseUrl,
+        spaceId: spaceID,
+        environment: environment,
       );
 
       final fetchedEntries = await sut.getEntries(
@@ -240,12 +278,11 @@ void main() {
       when(() => httpClientMock.get(expectedUrl))
           .thenAnswer((_) async => response);
 
-      final sut = Client(
-        spaceID,
-        accessToken,
-        host: host,
+      final sut = Client.performingRequestsUsing(
+        httpClient: httpClientMock,
+        baseURL: baseUrl,
+        spaceId: spaceID,
         environment: environment,
-        httpClient: (_) => httpClientMock,
       );
 
       try {
@@ -264,10 +301,10 @@ void main() {
   });
 
   test('[close] Closes the httpClient', () {
-    final sut = Client(
-      spaceID,
-      accessToken,
-      httpClient: (token) => httpClientMock,
+    final sut = Client.performingRequestsUsing(
+      httpClient: httpClientMock,
+      baseURL: baseUrl,
+      spaceId: spaceID,
     );
 
     sut.close();

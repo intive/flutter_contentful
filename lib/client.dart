@@ -11,8 +11,9 @@ abstract class ContentfulHTTPClient {
   void close();
 }
 
-class HttpClient extends http.BaseClient implements ContentfulHTTPClient {
-  HttpClient(String accessToken)
+class BearerTokenHTTPClient extends http.BaseClient
+    implements ContentfulHTTPClient {
+  BearerTokenHTTPClient(String accessToken)
       : _inner = http.Client(),
         accessToken = accessToken;
 
@@ -27,38 +28,25 @@ class HttpClient extends http.BaseClient implements ContentfulHTTPClient {
 }
 
 class Client {
-  static ContentfulHTTPClient _defaultHTTPClient(String token) =>
-      HttpClient(token);
-
-  Client(
-    String spaceId,
-    String accessToken, {
-    String host = 'cdn.contentful.com',
+  Client({
+    required String accessToken,
+    Uri? baseURL,
+    required String spaceId,
     String environment = 'master',
-    ContentfulHTTPClient Function(String) httpClient =
-        Client._defaultHTTPClient,
-  }) : this.resolvingAgainstBaseURL(
+  }) : this.performingRequestsUsing(
+          httpClient: BearerTokenHTTPClient(accessToken),
+          baseURL: baseURL,
           spaceId: spaceId,
-          accessToken: accessToken,
-          baseURL: Uri(
-            scheme: 'https',
-            host: host,
-          ),
           environment: environment,
-          httpClient: httpClient,
         );
 
-  Client.resolvingAgainstBaseURL({
-    required String spaceId,
-    required String accessToken,
-    required Uri baseURL,
-    String environment = 'master',
-    ContentfulHTTPClient Function(String) httpClient =
-        Client._defaultHTTPClient,
-  })  : _httpClient = httpClient(accessToken),
-        baseURL = baseURL,
-        spaceId = spaceId,
-        environment = environment;
+  Client.performingRequestsUsing({
+    required ContentfulHTTPClient httpClient,
+    Uri? baseURL,
+    required this.spaceId,
+    this.environment = 'master',
+  })  : _httpClient = httpClient,
+        baseURL = baseURL ?? Uri.https('cdn.contentful.com', '');
 
   final ContentfulHTTPClient _httpClient;
   final String spaceId;

@@ -13,9 +13,7 @@ abstract class ContentfulHTTPClient {
 
 class BearerTokenHTTPClient extends http.BaseClient
     implements ContentfulHTTPClient {
-  BearerTokenHTTPClient(String accessToken)
-      : _inner = http.Client(),
-        accessToken = accessToken;
+  BearerTokenHTTPClient(this.accessToken) : _inner = http.Client();
 
   final http.Client _inner;
   final String accessToken;
@@ -28,37 +26,23 @@ class BearerTokenHTTPClient extends http.BaseClient
 }
 
 class Client {
-  Client({
-    required String accessToken,
-    Uri? baseURL,
-    required String spaceId,
-    String environment = 'master',
-  }) : this.performingRequestsUsing(
-          httpClient: BearerTokenHTTPClient(accessToken),
-          baseURL: baseURL,
-          spaceId: spaceId,
-          environment: environment,
-        );
-
-  Client.performingRequestsUsing({
-    required ContentfulHTTPClient httpClient,
-    Uri? baseURL,
+  Client(
+    this._httpClient, {
     required this.spaceId,
+    Uri? baseURL,
     this.environment = 'master',
-  })  : _httpClient = httpClient,
-        baseURL = baseURL ?? Uri.https('cdn.contentful.com', '');
+  }) : baseURL = baseURL ?? Uri.https('cdn.contentful.com', '');
 
   final ContentfulHTTPClient _httpClient;
   final String spaceId;
   final Uri baseURL;
   final String environment;
 
-  Uri _uri(String path, {Map<String, dynamic>? params}) => baseURL.resolveUri(
-        Uri(
-          path: 'spaces/$spaceId/environments/$environment$path',
-          queryParameters: params,
-        ),
-      );
+  Uri _resolveUri(String path, {Map<String, dynamic>? params}) =>
+      baseURL.resolveUri(baseURL.resolveUri(Uri(
+        path: 'spaces/$spaceId/environments/$environment$path',
+        queryParameters: params,
+      )));
 
   void close() => _httpClient.close();
 
@@ -68,7 +52,7 @@ class Client {
     Map<String, dynamic>? params,
   }) async {
     final response =
-        await _httpClient.get(_uri('/entries/$id', params: params));
+        await _httpClient.get(_resolveUri('/entries/$id', params: params));
     if (response.statusCode != 200) {
       throw Exception('getEntry failed');
     }
@@ -79,7 +63,9 @@ class Client {
     Map<String, dynamic> query,
     T Function(Map<String, dynamic>) fromJson,
   ) async {
-    final response = await _httpClient.get(_uri('/entries', params: query));
+    final response =
+        await _httpClient.get(_resolveUri('/entries', params: query));
+
     if (response.statusCode != 200) {
       throw Exception('getEntries failed');
     }

@@ -82,8 +82,8 @@ void main() {
       when(() => httpClientMock.get(expectedUrl))
           .thenAnswer((_) async => response);
 
-      final sut = Client.performingRequestsUsing(
-        httpClient: httpClientMock,
+      final sut = Client(
+        httpClientMock,
         spaceId: spaceID,
         environment: environment,
       );
@@ -103,8 +103,8 @@ void main() {
       when(() => httpClientMock.get(expectedUrl))
           .thenAnswer((_) async => response);
 
-      final sut = Client.performingRequestsUsing(
-        httpClient: httpClientMock,
+      final sut = Client(
+        httpClientMock,
         baseURL: baseUrl,
         spaceId: spaceID,
         environment: environment,
@@ -126,8 +126,8 @@ void main() {
       when(() => httpClientMock.get(expectedUrl))
           .thenAnswer((_) async => response);
 
-      final sut = Client.performingRequestsUsing(
-        httpClient: httpClientMock,
+      final sut = Client(
+        httpClientMock,
         baseURL: baseUrl,
         spaceId: spaceID,
         environment: environment,
@@ -236,8 +236,8 @@ void main() {
       when(() => httpClientMock.get(expectedUrl))
           .thenAnswer((_) async => response);
 
-      final sut = Client.performingRequestsUsing(
-        httpClient: httpClientMock,
+      final sut = Client(
+        httpClientMock,
         spaceId: spaceID,
         environment: environment,
       );
@@ -256,8 +256,8 @@ void main() {
       when(() => httpClientMock.get(expectedUrl))
           .thenAnswer((_) async => response);
 
-      final sut = Client.performingRequestsUsing(
-        httpClient: httpClientMock,
+      final sut = Client(
+        httpClientMock,
         baseURL: baseUrl,
         spaceId: spaceID,
         environment: environment,
@@ -278,8 +278,8 @@ void main() {
       when(() => httpClientMock.get(expectedUrl))
           .thenAnswer((_) async => response);
 
-      final sut = Client.performingRequestsUsing(
-        httpClient: httpClientMock,
+      final sut = Client(
+        httpClientMock,
         baseURL: baseUrl,
         spaceId: spaceID,
         environment: environment,
@@ -301,8 +301,8 @@ void main() {
   });
 
   test('[close] Closes the httpClient', () {
-    final sut = Client.performingRequestsUsing(
-      httpClient: httpClientMock,
+    final sut = Client(
+      httpClientMock,
       baseURL: baseUrl,
       spaceId: spaceID,
     );

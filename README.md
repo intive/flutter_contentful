@@ -8,7 +8,6 @@ This Dart package is a small abstraction on top of the Contentful Delivery API.
 
 To use this plugin, install `contentful` as a dependency in your `pubspec.yaml`.
 
-
 ## API
 
 The following example uses `equatable` and `json_annotation` to create a
@@ -83,7 +82,11 @@ class EventRepository {
 }
 
 Future<void> main() async {
-  final repo = EventRepository(Client('SPACE_ID', 'ACCESS_TOKEN'))
+  final repo = EventRepository(Client(
+    BearerTokenHTTPClient('token'),
+    spaceId: 'space-id',
+  ));
+
   final event = await repo.findBySlug('myevent');
   print('Title: ${event.fields.title}');
 }

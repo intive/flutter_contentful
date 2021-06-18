@@ -14,7 +14,7 @@ abstract class Entry<T> extends Equatable {
   List<Object?> get props => [sys, fields];
 }
 
-class EntryCollection<T extends Entry> extends Equatable {
+class EntryCollection<T> extends Equatable {
   EntryCollection({
     required this.total,
     required this.skip,

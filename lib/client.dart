@@ -46,7 +46,7 @@ class Client {
 
   void close() => _httpClient.close();
 
-  Future<T> getEntry<T extends Entry>(
+  Future<T> getEntry<T>(
     String id,
     T Function(Map<String, dynamic>) fromJson, {
     Map<String, dynamic>? params,
@@ -59,7 +59,7 @@ class Client {
     return fromJson(json.decode(utf8.decode(response.bodyBytes)));
   }
 
-  Future<EntryCollection<T>> getEntries<T extends Entry>(
+  Future<EntryCollection<T>> getEntries<T>(
     Map<String, dynamic> query,
     T Function(Map<String, dynamic>) fromJson,
   ) async {

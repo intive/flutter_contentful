@@ -22,7 +22,7 @@ class AssetFields extends Equatable {
     required this.file,
   });
 
-  final String title;
+  final String? title;
   final AssetFile file;
 
   @override

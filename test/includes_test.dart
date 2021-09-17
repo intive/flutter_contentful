@@ -242,6 +242,20 @@ void main() {
                   'data': {}
                 },
                 {
+                  'nodeType': 'hyperlink',
+                  'content': [
+                    {
+                      'nodeType': 'text',
+                      'value': 'Here is a link',
+                      'marks': [
+                        {'type': 'code'}
+                      ],
+                      'data': {}
+                    }
+                  ],
+                  'data': {'uri': 'https://arisechurch.com'}
+                },
+                {
                   'nodeType': 'embedded-asset-block',
                   'content': [],
                   'data': {
@@ -299,6 +313,20 @@ void main() {
                     }
                   ],
                   'data': {}
+                },
+                {
+                  'nodeType': 'hyperlink',
+                  'content': [
+                    {
+                      'nodeType': 'text',
+                      'value': 'Here is a link',
+                      'marks': [
+                        {'type': 'code'}
+                      ],
+                      'data': {}
+                    }
+                  ],
+                  'data': {'uri': 'https://arisechurch.com'}
                 },
                 {
                   'nodeType': 'embedded-asset-block',

@@ -59,10 +59,13 @@ class Includes {
   Map<String, dynamic> _walkRichText(Map<String, dynamic> doc) {
     final root = {
       ...doc,
-      'data': entry_utils
-          .dataTarget(doc)
-          .bind(map.resolveLink)
-          .fold(() => {}, (entry) => {'target': entry}),
+      'data': entry_utils.dataTarget(doc).bind(map.resolveLink).fold(
+            () => doc['data'],
+            (entry) => {
+              ...doc['data'],
+              'target': entry,
+            },
+          ),
     };
 
     return entry_utils

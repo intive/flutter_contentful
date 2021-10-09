@@ -23,7 +23,7 @@ class AssetFields extends Equatable {
   });
 
   final String? title;
-  final AssetFile file;
+  final AssetFile? file;
 
   @override
   List<Object?> get props => [title, file];

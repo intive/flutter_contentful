@@ -53,7 +53,7 @@ class Client {
   }) async {
     final response =
         await _httpClient.get(_resolveUri('/entries/$id', params: params));
-    if (response.statusCode != 200) {
+    if (response.statusCode >= 400) {
       throw Exception('getEntry failed');
     }
     return fromJson(json.decode(utf8.decode(response.bodyBytes)));
@@ -66,7 +66,7 @@ class Client {
     final response =
         await _httpClient.get(_resolveUri('/entries', params: query));
 
-    if (response.statusCode != 200) {
+    if (response.statusCode >= 400) {
       throw Exception('getEntries failed');
     }
 

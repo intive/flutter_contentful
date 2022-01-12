@@ -20,9 +20,7 @@ Map<String, dynamic> _$AssetToJson(Asset instance) => <String, dynamic>{
 
 AssetFields _$AssetFieldsFromJson(Map<String, dynamic> json) => AssetFields(
       title: json['title'] as String?,
-      file: json['file'] == null
-          ? null
-          : AssetFile.fromJson(json['file'] as Map<String, dynamic>),
+      file: AssetFile.fromJson(json['file'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$AssetFieldsToJson(AssetFields instance) =>

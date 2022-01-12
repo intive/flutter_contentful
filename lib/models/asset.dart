@@ -18,12 +18,14 @@ class Asset extends Entry<AssetFields> {
 @JsonSerializable()
 class AssetFields extends Equatable {
   AssetFields({
-    required this.title,
+    this.title,
     required this.file,
+    this.description,
   });
 
   final String? title;
-  final AssetFile? file;
+  final AssetFile file;
+  final String? description;
 
   @override
   List<Object?> get props => [title, file];
@@ -47,6 +49,19 @@ class AssetFile extends Equatable {
   final String contentType;
   final String url;
   final AssetFileDetails details;
+
+  String get httpsUrl => 'https:$url';
+
+  String httpsUrlWithSize({double? height, double? width}) {
+    var httpsUrlWithParams = '$httpsUrl?';
+    if (height != null) {
+      httpsUrlWithParams += 'h=$height';
+    }
+    if (width != null) {
+      httpsUrlWithParams += 'w=$width';
+    }
+    return httpsUrlWithParams;
+  }
 
   @override
   List<Object?> get props => [fileName, contentType, url, details];

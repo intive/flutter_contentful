@@ -6,7 +6,7 @@ This Dart package is a small abstraction on top of the Contentful Delivery API.
 
 ## Usage
 
-To use this plugin, install `contentful` as a dependency in your `pubspec.yaml`.
+To use this plugin, install `flutter_contentful` as a dependency in your `pubspec.yaml`.
 
 ## API
 
@@ -90,4 +90,23 @@ Future<void> main() async {
   final event = await repo.findBySlug('myevent');
   print('Title: ${event.fields.title}');
 }
+
+```
+### Assets
+You can use the Contentful Asset api like this:
+
+```
+if you want to have the url to download the raw asset file you can access the a getter for the url like this:
+final url = asset.file.httpsUrl;
+
+If you want to resize the asset image you can use the api like this:
+
+To preserve the aspect ratio only set height or width but not both.
+final size600url = asset.file.httpsUrlWithSize(width: 600)
+final height600url = asset.file.httpsUrlWithSize(height: 600)
+
+To have a custom size set both parameters:
+final customSizeUrl = asset.file.httpsUrlWithSize(height: 600, width: 600)
+
+
 ```

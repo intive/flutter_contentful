@@ -1,6 +1,6 @@
 import 'package:test/test.dart';
 import 'package:collection/collection.dart';
-import 'package:contentful/includes.dart';
+import 'package:flutter_contentful/includes.dart';
 
 void main() {
   Function deepEq = const DeepCollectionEquality().equals;

@@ -7,7 +7,7 @@ abstract class Entry<T> extends Equatable {
     this.fields,
   });
 
-  final SystemFields? sys;
+  final SystemFields sys;
   final T? fields;
 
   @override

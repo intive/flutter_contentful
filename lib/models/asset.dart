@@ -55,10 +55,10 @@ class AssetFile extends Equatable {
   String httpsUrlWithSize({double? height, double? width}) {
     var httpsUrlWithParams = '$httpsUrl?';
     if (height != null) {
-      httpsUrlWithParams += 'h=$height';
+      httpsUrlWithParams += 'h=${height.toInt()}';
     }
     if (width != null) {
-      httpsUrlWithParams += 'w=$width';
+      httpsUrlWithParams += 'w=${width.toInt()}';
     }
     return httpsUrlWithParams;
   }

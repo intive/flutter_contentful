@@ -1,4 +1,4 @@
-import 'package:contentful/contentful.dart';
+import 'package:flutter_contentful/contentful.dart';
 import 'package:equatable/equatable.dart';
 import 'package:http/http.dart' as http;
 import 'package:json_annotation/json_annotation.dart';

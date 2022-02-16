@@ -1,5 +1,5 @@
 import 'package:dartz/dartz.dart';
-import 'package:contentful/lib/conversion.dart' as convert;
+import 'package:flutter_contentful/lib/conversion.dart' as convert;
 
 Option<String> id(Map<String, dynamic> entry) => optionOf(entry['sys']?['id']);
 

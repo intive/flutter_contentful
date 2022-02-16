@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
-import 'package:contentful/lib/conversion.dart' as convert;
-import 'package:contentful/lib/entry.dart' as entry_utils;
+import 'package:flutter_contentful/lib/conversion.dart' as convert;
+import 'package:flutter_contentful/lib/entry.dart' as entry_utils;
 
 bool _isListOfLinks(dynamic list) {
   if (list is! List) {

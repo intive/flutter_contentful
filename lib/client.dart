@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:contentful/includes.dart';
 import 'package:dartz/dartz.dart';
+import 'package:flutter_contentful/includes.dart';
 import 'package:http/http.dart' as http;
-import 'package:contentful/lib/conversion.dart' as convert;
-import 'package:contentful/models/entry.dart';
+import 'package:flutter_contentful/lib/conversion.dart' as convert;
+import 'package:flutter_contentful/models/entry.dart';
 
 abstract class ContentfulHTTPClient {
   Future<http.Response> get(Uri url, {Map<String, String>? headers});
